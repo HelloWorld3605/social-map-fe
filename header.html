@@ -5,13 +5,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Header and navbar</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Social Map</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/header.css">
+    <link rel="stylesheet" href="styles/header.css?v=1.7">
     <link rel="stylesheet" href="styles/general.css">
+
+    <!-- Preload Mapbox Resources -->
+    <link rel="preconnect" href="https://api.mapbox.com">
+    <link rel="dns-prefetch" href="https://api.mapbox.com">
+    <link rel="preload" href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" as="style">
+    <link rel="preload" href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js" as="script">
     <script src="js/hamburger-nav.js"></script>
+    <script src="js/side-chat.js"></script>
+    <script src="js/network-monitor.js"></script>
+
+    <script>
+        // Debug CSS loading
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('CSS Debug: DOM loaded');
+
+            // Force refresh CSS if needed
+            setTimeout(function () {
+                const sideChat = document.querySelector('.side-chat');
+                if (sideChat) {
+                    const computedStyle = window.getComputedStyle(sideChat, '::before');
+                    console.log('Arrow visibility:', computedStyle.opacity);
+                    console.log('Arrow position:', computedStyle.right);
+                }
+            }, 100);
+        });
+    </script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <style>
@@ -27,6 +55,131 @@
         .mapboxgl-ctrl-logo,
         .mapboxgl-ctrl-attrib {
             display: none !important;
+        }
+
+        /* Map Loading States */
+        .map-loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
+
+        .map-loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .map-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #EC5E95;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .map-loading-text {
+            font-family: 'Roboto', Arial, sans-serif;
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .map-error-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 1001;
+            max-width: 400px;
+            display: none;
+        }
+
+        .map-error-container.show {
+            display: block;
+        }
+
+        .map-error-icon {
+            font-size: 48px;
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .map-error-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .map-error-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .map-retry-btn {
+            background: #EC5E95;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .map-retry-btn:hover {
+            background: #d14d85;
+        }
+
+        .map-retry-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Progress bar */
+        .map-progress {
+            width: 200px;
+            height: 4px;
+            background: #f3f3f3;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .map-progress-bar {
+            height: 100%;
+            background: #EC5E95;
+            width: 0%;
+            transition: width 0.3s ease;
         }
     </style>
 </head>
@@ -56,7 +209,7 @@
 
 
         <div class="right-section">
-            <div class="chat-container">
+            <div class="chat-container" id="chatToggle">
                 <img class="chat-icon" src="icons/chatbubbles-outline.svg" alt="Chat">
                 <span class="unread-messages">1</span>
             </div>
@@ -86,14 +239,100 @@
         </ul>
     </nav>
 
+    <!-- Chat Popup Overlay -->
+    <div class="chat-popup-overlay" id="chatPopupOverlay"></div>
+
+    <!-- Side Chat -->
+    <div class="side-chat" id="sideChat">
+        <div class="chat-header">
+            <h3>Tin nhắn</h3>
+            <button class="chat-close-btn" id="chatCloseBtn">×</button>
+        </div>
+
+        <div class="chat-friends-list">
+            <div class="friend-item active" data-friend="nguyen-van-a">
+                <img src="channels/myprofile.jpg" alt="Avatar" class="friend-avatar">
+                <div class="friend-info">
+                    <div class="friend-name">Nguyễn Văn A</div>
+                    <div class="friend-status">Đang hoạt động</div>
+                </div>
+                <div class="unread-count">2</div>
+            </div>
+
+            <div class="friend-item" data-friend="tran-thi-b">
+                <img src="channels/myprofile.jpg" alt="Avatar" class="friend-avatar">
+                <div class="friend-info">
+                    <div class="friend-name">Trần Thị B</div>
+                    <div class="friend-status">Hoạt động 5 phút trước</div>
+                </div>
+
+                <div class="unread-count">1</div>
+            </div>
+
+            <div class="friend-item" data-friend="le-van-c">
+                <img src="channels/myprofile.jpg" alt="Avatar" class="friend-avatar">
+                <div class="friend-info">
+                    <div class="friend-name">Lê Văn C</div>
+                    <div class="friend-status">Không hoạt động</div>
+                </div>
+            </div>
+
+            <div class="friend-item" data-friend="phung-tuan-hai">
+                <img src="channels/myprofile.jpg" alt="Avatar" class="friend-avatar">
+                <div class="friend-info">
+                    <div class="friend-name">Phùng Tuấn Hải</div>
+                    <div class="friend-status">Không hoạt động</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Facebook-style Chat Windows Container -->
+    <div class="chat-windows-container" id="chatWindowsContainer">
+        <!-- Chat windows will be dynamically added here -->
+    </div>
 
     <main>
         <section class="map-section" id="map">
+            <!-- Map Loading Overlay -->
+            <div class="map-loading-overlay" id="mapLoadingOverlay">
+                <div class="map-spinner"></div>
+                <div class="map-loading-text" id="mapLoadingText">Đang tải bản đồ...</div>
+                <div class="map-progress">
+                    <div class="map-progress-bar" id="mapProgressBar"></div>
+                </div>
+            </div>
+
+            <!-- Map Error Container -->
+            <div class="map-error-container" id="mapErrorContainer">
+                <div class="map-error-icon">⚠️</div>
+                <div class="map-error-title">Không thể tải bản đồ</div>
+                <div class="map-error-message" id="mapErrorMessage">
+                    Có lỗi xảy ra khi tải bản đồ. Vui lòng kiểm tra kết nối mạng và thử lại.
+                </div>
+                <button class="map-retry-btn" id="mapRetryBtn">Thử lại</button>
+            </div>
         </section>
     </main>
-    <script src="js/mapbox.js"></script>
+    <script src="js/mapbox.js?v=1.2"></script>
 
-    
+    <!-- Service Worker Registration -->
+    <script>
+        // Register Service Worker for caching (optional)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+
 </body>
 
 
