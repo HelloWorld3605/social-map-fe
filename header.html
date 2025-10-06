@@ -12,8 +12,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/header.css?v=1.7">
+    <link rel="stylesheet" href="styles/header.css?v=1.9">
     <link rel="stylesheet" href="styles/general.css">
+    <link rel="stylesheet" href="styles/location-message.css">
+    <link rel="stylesheet" href="styles/mapbox.css">
 
     <!-- Preload Mapbox Resources -->
     <link rel="preconnect" href="https://api.mapbox.com">
@@ -22,10 +24,11 @@
     <link rel="preload" href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js" as="script">
     <script src="js/hamburger-nav.js"></script>
     <script src="js/side-chat.js"></script>
+    <script src="js/location-sharing.js?v=1.1"></script>
     <script src="js/network-monitor.js"></script>
 
     <script>
-        // Debug CSS loading
+        // Debug CSS loading and Location Sharing
         document.addEventListener('DOMContentLoaded', function () {
             console.log('CSS Debug: DOM loaded');
 
@@ -37,8 +40,20 @@
                     console.log('Arrow visibility:', computedStyle.opacity);
                     console.log('Arrow position:', computedStyle.right);
                 }
+
+                // Check location sharing initialization
+                console.log('Location sharing script loaded');
             }, 100);
         });
+
+        window.testLocationShare = function () {
+            if (window.locationSharing) {
+                console.log('Location sharing is ready!');
+                window.locationSharing.showMessage('Location sharing đã sẵn sàng! 🗺️', 'success');
+            } else {
+                console.log('Location sharing chưa sẵn sàng...');
+            }
+        };
     </script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
@@ -57,7 +72,6 @@
             display: none !important;
         }
 
-        /* Map Loading States */
         .map-loading-overlay {
             position: absolute;
             top: 0;

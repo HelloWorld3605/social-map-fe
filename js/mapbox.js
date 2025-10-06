@@ -249,9 +249,18 @@ class MapboxManager {
 
             console.log('Enhanced Hanoi marker added successfully');
 
-            // Add click event to debug
-            marker.getElement().addEventListener('click', () => {
-                console.log('Hanoi marker clicked!');
+            // Store marker reference for location sharing
+            this.hanoiMarker = marker;
+
+            // Add click event only if not dragging (to avoid conflict with location sharing)
+            marker.getElement().addEventListener('click', (e) => {
+                // Only handle click if not being dragged by location sharing
+                if (!window.locationSharing || !window.locationSharing.isDragging) {
+                    console.log('Hanoi marker clicked!');
+                } else {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
             });
 
         } catch (error) {
@@ -263,7 +272,7 @@ class MapboxManager {
             compact: true
         }), 'bottom-left');
 
-        // Dispatch custom event for other scripts
+        // Dispatch custom event for other scripts to initialize LocationSharing
         window.dispatchEvent(new CustomEvent('mapLoaded', {
             detail: { map: this.map }
         }));
