@@ -1,0 +1,394 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    height: 55px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 20px;
+    /* margin: 0px 30px 0px 30px; */
+
+}
+
+/*-------------- left section --------------------*/
+.left-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 300px;
+}
+
+.hamburger-menu {
+    height: 24px;
+}
+
+.socialmap-logo {
+    width: 190px;
+    position: relative;
+    left: 26px;
+    bottom: 7px;
+}
+
+
+/*-------------- middle section--------------------*/
+.middle-section {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background-color: rgb(243, 243, 243);
+    border-radius: 30px;
+    padding-right: 5px;
+    max-width: 500px;
+    width: 100%;
+    transition: box-shadow 0.3s ease;
+}
+
+/* Khi click,hover vào input bên trong, container cũng sáng viền */
+.search-container:focus-within,
+.search-container:hover {
+    box-shadow: 0 0 0 2px #e4b4c6;
+}
+
+
+.search-bar {
+    flex: 1;
+    height: 55px;
+    border-radius: 30px 0 0 30px;
+    padding-left: 20px;
+    font-size: 14px;
+    border: none;
+    background-color: transparent;
+    /* để hòa với container */
+    outline: none;
+}
+
+.search-button {
+    background-color: #ea4c89;
+    border: none;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+
+.search-icon {
+    height: 20px;
+    width: 20px;
+    filter: brightness(0) invert(1);
+    /* chuyển icon đen thành trắng */
+}
+
+
+
+/*-------------- right section --------------------*/
+.right-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.chat-container,
+.profile-container,
+.notifications-container {
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.notifications-icon {
+    height: 28px;
+}
+
+.chat-icon {
+    height: 24px;
+}
+
+.current-user-picture {
+    height: 42px;
+    border-radius: 21px;
+}
+
+.profile-container:hover,
+.chat-container:hover,
+.notifications-container:hover {
+    opacity: 0.7;
+}
+
+.notifications-container,
+.profile-container,
+.chat-container {
+    position: relative;
+}
+
+.notification-count,
+.unread-messages {
+    position: absolute;
+    top: -6px;
+    right: -5px;
+    font-size: 13px;
+    background-color: rgb(200, 0, 0);
+    color: white;
+    padding: 2px 5px 2px 5px;
+    border-radius: 10px;
+}
+
+.arrow-down-icon {
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    bottom: 2px;
+    left: 30px;
+    background-color: #ddd6d9;
+    border-radius: 10px;
+}
+
+
+
+/* ===== HAMBURGER MENU ===== */
+.hamburger {
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.15s;
+    width: 40px;
+    /* tăng hitbox */
+    height: 40px;
+    /* tăng hitbox */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hamburger-box {
+    width: 30px;
+    height: 24px;
+    display: inline-block;
+    position: relative;
+}
+
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+    width: 30px;
+    height: 2px;
+    background-color: #000;
+    border-radius: 4px;
+    position: absolute;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.hamburger-inner {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    margin-top: -1px;
+}
+
+.hamburger-inner::before {
+    content: "";
+    top: -8px;
+}
+
+.hamburger-inner::after {
+    content: "";
+    bottom: -8px;
+}
+
+.hamburger:hover {
+    opacity: 0.7;
+}
+
+.hamburger-box {
+    width: 30px;
+    height: 24px;
+    display: inline-block;
+    position: relative;
+}
+
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+    width: 30px;
+    height: 2px;
+    background-color: #000;
+    border-radius: 4px;
+    position: absolute;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.hamburger-inner {
+    top: 50%;
+}
+
+.hamburger-inner::before,
+.hamburger-inner::after {
+    content: "";
+    display: block;
+}
+
+.hamburger-inner::before {
+    top: -8px;
+}
+
+.hamburger-inner::after {
+    bottom: -8px;
+}
+
+/* Active (thành dấu X) */
+.hamburger.is-active .hamburger-inner {
+    transform: rotate(45deg);
+}
+
+.hamburger.is-active .hamburger-inner::before {
+    top: 0;
+    opacity: 0;
+}
+
+.hamburger.is-active .hamburger-inner::after {
+    bottom: 0;
+    transform: rotate(-90deg);
+}
+
+/* ===== SIDEBAR MENU ===== */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    /* Ẩn mặc định */
+    width: 250px;
+    height: 100%;
+    background: #fff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+    padding-top: 60px;
+    /* chừa header */
+    z-index: 999;
+}
+
+.side-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.side-menu ul li {
+    padding: 15px 20px;
+}
+
+.side-menu ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.side-menu ul li a:hover {
+    color: #EC5E95;
+}
+
+.side-menu ul li a:active {
+    color: #f1b9ce;
+}
+
+/* Khi mở */
+.side-menu.is-active {
+    left: 0;
+}
+
+/* ===== SIDEBAR ANIMATION ===== */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    /* Ẩn mặc định */
+    width: 300px;
+    height: 100%;
+    background: #fff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: left 0.4s ease;
+    /* trượt mượt */
+    padding-top: 60px;
+    /* chừa header */
+    z-index: 999;
+    overflow: hidden;
+}
+
+/* Khi mở */
+.side-menu.is-active {
+    left: 0;
+}
+
+/* Ẩn item ban đầu */
+.side-menu ul li {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+/* Khi menu active, animate lần lượt */
+.side-menu.is-active ul li {
+    animation: slideIn 0.4s forwards;
+}
+
+.side-menu.is-active ul li:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.side-menu.is-active ul li:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.side-menu.is-active ul li:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.side-menu.is-active ul li:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.side-menu.is-active ul li:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+/* Keyframes */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Icon màu đen ở light mode */
+.hamburger-inner,
+.chat-icon,
+.notifications-icon,
+.socialmap-logo {
+    filter: invert(0);
+    transition: filter 0.3s ease;
+}
+
+/* Khi bật dark mode -> đổi thành trắng */
+body.dark-mode .hamburger-inner,
+body.dark-mode .chat-icon,
+body.dark-mode .notifications-icon,
+body.dark-mode .socialmap-logo {
+    filter: invert(1);
+}

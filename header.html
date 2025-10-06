@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header and navbar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/header.css">
+    <link rel="stylesheet" href="styles/general.css">
+    <script src="js/hamburger-nav.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <style>
+        .map-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+
+        .mapboxgl-ctrl-logo,
+        .mapboxgl-ctrl-attrib {
+            display: none !important;
+        }
+    </style>
+</head>
+
+
+<body>
+    <header class="header">
+        <div class="left-section">
+            <!-- Hamburger động -->
+            <button class="hamburger hamburger--boring" type="button">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+            </button>
+            <img href="https://www.youtube.com/" class="socialmap-logo" src="image/Social Map.svg">
+        </div>
+
+
+        <div class="middle-section">
+            <div class="search-container">
+                <input class="search-bar" type="search" placeholder="Bạn đang tìm kiếm gì?">
+                <button class="search-button">
+                    <img class="search-icon" src="icons/search.svg">
+                </button>
+            </div>
+        </div>
+
+
+        <div class="right-section">
+            <div class="chat-container">
+                <img class="chat-icon" src="icons/chatbubbles-outline.svg" alt="Chat">
+                <span class="unread-messages">1</span>
+            </div>
+
+            <div class="notifications-container">
+                <img class="notifications-icon" src="icons/notifications.svg" alt="Notifications">
+                <span class="notification-count">3</span>
+            </div>
+
+            <div class="profile-container">
+                <img class="current-user-picture" src="channels/myprofile.jpg" alt="User Profile">
+                <img class="arrow-down-icon" src="icons/arrow-down.svg" alt="Dropdown">
+            </div>
+        </div>
+
+    </header>
+
+
+    <!-- Sidebar menu -->
+    <nav class="side-menu">
+        <ul>
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Bản đồ</a></li>
+            <li><a href="#">Bạn bè</a></li>
+            <li><a href="#">Tin nhắn</a></li>
+            <li><a href="#">Cài đặt</a></li>
+        </ul>
+    </nav>
+
+
+    <main>
+        <section class="map-section" id="map">
+        </section>
+    </main>
+    <script src="js/mapbox.js"></script>
+
+    
+</body>
+
+
+</html>
