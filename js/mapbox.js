@@ -104,13 +104,11 @@ class MapboxManager {
         this.updateLoadingText('Đang khởi tạo bản đồ...');
 
         try {
-            // Set access token
             mapboxgl.accessToken = this.accessToken;
 
             this.updateProgress(20);
             this.updateLoadingText('Đang kết nối đến Mapbox...');
 
-            // Create map with error handling
             this.map = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/mapbox/streets-v12',
