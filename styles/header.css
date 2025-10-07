@@ -9,7 +9,7 @@
     z-index: 1000;
     padding: 20px;
     /* margin: 0px 30px 0px 30px; */
-
+    /* backdrop-filter: blur(15px); */
 }
 
 /*-------------- left section --------------------*/
@@ -367,6 +367,10 @@
 
 .side-menu.is-active ul li:nth-child(5) {
     animation-delay: 0.5s;
+}
+
+.side-menu.is-active ul li:nth-child(6) {
+    animation-delay: 0.6s;
 }
 
 /* Keyframes */

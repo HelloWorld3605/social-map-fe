@@ -176,6 +176,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Function to detect and format links in text
+    function linkify(text) {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        return text.replace(urlRegex, (url) => {
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="message-link">${url}</a>`;
+        });
+    }
+
     function addMessageToChatWindow(friendId, messageText, isSent = false) {
         const chatWindow = openChatWindows.get(friendId);
         if (!chatWindow) return;
@@ -192,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isSent) {
             messageDiv.innerHTML = `
                 <div class="chat-window-message-content">
-                    <div class="chat-window-message-text">${messageText}</div>
+                    <div class="chat-window-message-text">${linkify(messageText)}</div>
                     <div class="chat-window-message-time">${currentTime}</div>
                 </div>
             `;
@@ -203,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
             messageDiv.innerHTML = `
                 <img src="${avatar}" alt="Avatar" class="chat-window-message-avatar">
                 <div class="chat-window-message-content">
-                    <div class="chat-window-message-text">${messageText}</div>
+                    <div class="chat-window-message-text">${linkify(messageText)}</div>
                     <div class="chat-window-message-time">${currentTime}</div>
                 </div>
             `;

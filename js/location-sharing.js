@@ -5,6 +5,12 @@ class LocationSharing {
         this.draggedMarker = null;
         this.dragPreview = null;
 
+        // Delay Detection Pattern properties
+        this.clickStartTime = 0;
+        this.clickThreshold = 150; // 150ms để phân biệt click vs drag
+        this.dragStarted = false;
+        this.dragThreshold = 5; // 5px movement to trigger drag
+
         this.init();
     }
 
@@ -12,6 +18,7 @@ class LocationSharing {
         this.attachMarkerEventsOnce();
         this.setupGlobalDragEvents();
     }
+
 
     // 🧩 Đảm bảo mỗi marker chỉ gắn 1 lần
     attachMarkerEventsOnce() {
@@ -49,6 +56,60 @@ class LocationSharing {
 
         if (this.isDragging) return; // tránh double-trigger
 
+        // Record click start time
+        this.clickStartTime = Date.now();
+        this.dragStarted = false;
+
+        // Set up drag detection with delay
+        this.setupDragDetection(e, markerEl);
+    }
+
+    setupDragDetection(e, markerEl) {
+        const startX = e.clientX;
+        const startY = e.clientY;
+        let hasMoved = false;
+        let isClick = true;
+
+        const onMouseMove = (moveEvent) => {
+            const deltaX = Math.abs(moveEvent.clientX - startX);
+            const deltaY = Math.abs(moveEvent.clientY - startY);
+            const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+
+            // Nếu di chuyển vượt ngưỡng, bắt đầu kéo
+            if (distance > this.dragThreshold && !this.dragStarted) {
+                this.initiateDrag(moveEvent, markerEl);
+                hasMoved = true;
+                isClick = false;
+            }
+
+            if (this.dragStarted) {
+                this.onDrag(moveEvent);
+            }
+        };
+
+        const onMouseUp = (upEvent) => {
+            const clickDuration = Date.now() - this.clickStartTime;
+
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+
+            // Nếu không di chuyển và click nhanh → xem là click popup
+            if (!hasMoved && clickDuration < this.clickThreshold && isClick) {
+                this.handleMarkerClick(markerEl);
+            }
+            // Nếu đã kéo → xử lý thả
+            else if (this.dragStarted) {
+                this.stopDrag(upEvent);
+            }
+        };
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    }
+
+
+    initiateDrag(e, markerEl) {
+        this.dragStarted = true;
         this.toggleMapInteractions(false);
 
         // Dữ liệu marker (hiện tại có 1: Hà Nội)
@@ -66,6 +127,28 @@ class LocationSharing {
         this.createDragPreview(e);
         this.highlightChats(true);
         console.log(`[LocationSharing] Dragging started for ${this.draggedMarker.name}`);
+    }
+
+    handleMarkerClick(markerEl) {
+        // Show popup instead of drag
+        console.log('[LocationSharing] Showing marker popup');
+
+        // Find the marker object and trigger its popup
+        const marker = this.findMarkerFromElement(markerEl);
+        if (marker && marker.getPopup()) {
+            marker.togglePopup();
+        }
+    }
+
+    findMarkerFromElement(element) {
+        // Find marker from mapbox manager
+        if (window.mapboxManager && window.mapboxManager.hanoiMarker) {
+            const marker = window.mapboxManager.hanoiMarker;
+            if (marker.getElement() === element) {
+                return marker;
+            }
+        }
+        return null;
     }
 
     onDrag(e) {
@@ -102,10 +185,15 @@ class LocationSharing {
     cleanupDrag() {
         this.isDragging = false;
         this.draggedMarker = null;
+        this.dragStarted = false;
+        this.clickStartTime = 0;
+
         this.toggleMapInteractions(true);
         document.body.style.cursor = '';
 
         if (this.dragPreview) this.dragPreview.remove();
+        this.dragPreview = null;
+
         document.querySelectorAll('.location-drop-zone, .location-drop-active')
             .forEach(el => el.classList.remove('location-drop-zone', 'location-drop-active'));
 
@@ -114,7 +202,7 @@ class LocationSharing {
             el.style.cursor = 'grab';
         });
 
-        console.log('[LocationSharing] Dragging ended');
+        console.log('[LocationSharing] Drag cleanup completed');
     }
 
     toggleMapInteractions(enable) {
@@ -210,5 +298,5 @@ window.focusLocation = (lng, lat, name) => {
 // ==== Init ====
 window.addEventListener('mapLoaded', (e) => {
     window.locationSharing = new LocationSharing(e.detail.map);
-    console.log('✅ LocationSharing ready (no duplicate listeners)');
+    console.log('LocationSharing ready (no duplicate listeners)');
 });

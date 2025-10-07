@@ -628,9 +628,34 @@ body.dark-mode .message-input-container {
     max-width: 100%;
 }
 
+/* Message link styling */
+.chat-window-message-text .message-link {
+    color: #1877f2;
+    text-decoration: underline;
+    word-break: break-all;
+    transition: color 0.2s ease;
+}
+
+.chat-window-message-text .message-link:hover {
+    color: #166fe5;
+    text-decoration: none;
+}
+
 .chat-window-message.sent .chat-window-message-text {
     background: #EC5E95;
     color: white;
+}
+
+/* Links in sent messages */
+.chat-window-message.sent .message-link {
+    color: #ffffff;
+    text-decoration: underline;
+    opacity: 0.9;
+}
+
+.chat-window-message.sent .message-link:hover {
+    opacity: 1;
+    text-decoration: none;
 }
 
 .chat-window-message-time {
@@ -791,9 +816,28 @@ body.dark-mode .chat-window-message-text {
     color: #e4e6ea;
 }
 
+/* Dark mode links in received messages */
+body.dark-mode .chat-window-message-text .message-link {
+    color: #58a6ff;
+}
+
+body.dark-mode .chat-window-message-text .message-link:hover {
+    color: #79c0ff;
+}
+
 body.dark-mode .chat-window-message.sent .chat-window-message-text {
     background: #EC5E95;
     color: white;
+}
+
+/* Dark mode links in sent messages remain white */
+body.dark-mode .chat-window-message.sent .message-link {
+    color: #ffffff;
+    opacity: 0.9;
+}
+
+body.dark-mode .chat-window-message.sent .message-link:hover {
+    opacity: 1;
 }
 
 body.dark-mode .typing-indicator {
